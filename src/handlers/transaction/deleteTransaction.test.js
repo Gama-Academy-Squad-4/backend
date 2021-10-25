@@ -6,6 +6,7 @@ const { ErrorTypesEnum } = require('../../enums/ErrorTypesEnum')
 const request = require('supertest')
 const app = require('../../app').app
 const { transactionService } = require('../../services/transactionService')
+const { Transaction } = require('../../models/transactionModel')
 
 describe('integration:updateTransaction', () => {
   beforeAll(async () => {
@@ -21,12 +22,12 @@ describe('integration:updateTransaction', () => {
     // arrange
     const transaction = {
       value: 500,
-      amount: 0.25,
-      transactionAt: moment().subtract(1, 'days').toDate()
+      amount: 0.25305689,
+      transactionAt: moment('2021-10-15')
 
     }
 
-    const { _id: createdTransactionId } = await transactionService.create(transaction)
+    const { _id: createdTransactionId } = await Transaction.create(transaction)
 
     // act
 

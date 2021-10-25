@@ -6,10 +6,34 @@ const { ErrorTypesEnum } = require('../../enums/ErrorTypesEnum')
 const request = require('supertest')
 const app = require('../../app').app
 const { transactionService } = require('../../services/transactionService')
+const axios = require('axios')
+const MockAdapter = require('axios-mock-adapter')
+
+const createAxiosMock = async (mock) => {
+  const bitcoinSummary = {
+    date: '2021-10-15',
+    opening: 262.99999,
+    closing: 269000,
+    lowest: 260.00002,
+    highest: 269,
+    volume: 7253.13363567,
+    quantity: 27.11390588,
+    amount: 28,
+    avg_price: 267.50604165
+  }
+
+  mock.onGet('https://www.mercadobitcoin.net/api/BTC/day-summary/2021/10/15/').reply(200, bitcoinSummary)
+}
 
 describe('integration:updateTransaction', () => {
+  let mock = null
+
   beforeAll(async () => {
+    mock = new MockAdapter(axios)
+
     await connect()
+
+    await createAxiosMock(mock)
   })
 
   afterAll(async () => {
@@ -21,18 +45,18 @@ describe('integration:updateTransaction', () => {
     // arrange
     const transaction = {
       value: 500,
-      amount: 0.25,
-      transactionAt: moment().subtract(1, 'days').toDate()
+      transactionAt: moment('2021-10-15')
     }
 
-    const { _id: createdTransactionId } = await transactionService.create(transaction)
+    const { _id: createdTransactionId, amount: oldAmount } = await transactionService.create(transaction)
 
     // act
     const newValue = 1000
 
     const response = await request(app).put('/transactions').send({
       id: createdTransactionId,
-      value: newValue
+      value: newValue,
+      transactionAt: moment('2021-10-15')
     })
 
     // assert
@@ -40,6 +64,7 @@ describe('integration:updateTransaction', () => {
 
     expect(response.statusCode).toBe(200)
     expect(editedTransaction.value).toBe(newValue)
+    expect(editedTransaction.amount).not.toBe(oldAmount)
   })
 
   it('should return 422 and INVALID_SCHEMA error using invalid input', async () => {
@@ -66,7 +91,8 @@ describe('integration:updateTransaction', () => {
     // act
     const response = await request(app).put('/transactions').send({
       id: randomTransactionId,
-      value: 600
+      value: 600,
+      transactionAt: moment('2021-10-15')
     })
 
     // assert

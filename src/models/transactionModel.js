@@ -10,8 +10,7 @@ const TransactionSchema = new Schema({
     required: [true, validationMessage('valor')]
   },
   amount: {
-    type: Number,
-    required: [true, validationMessage('quantidade')]
+    type: Number
   },
   transactionAt: {
     type: Date,

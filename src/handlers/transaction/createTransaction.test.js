@@ -5,10 +5,34 @@ const { reset } = require('../../../lib/test')
 const { ErrorTypesEnum } = require('../../enums/ErrorTypesEnum')
 const request = require('supertest')
 const app = require('../../app').app
+const axios = require('axios')
+const MockAdapter = require('axios-mock-adapter')
+
+const createAxiosMock = async (mock) => {
+  const bitcoinSummary = {
+    date: '2021-10-15',
+    opening: 262.99999,
+    closing: 269000,
+    lowest: 260.00002,
+    highest: 269,
+    volume: 7253.13363567,
+    quantity: 27.11390588,
+    amount: 28,
+    avg_price: 267.50604165
+  }
+
+  mock.onGet('https://www.mercadobitcoin.net/api/BTC/day-summary/2021/10/15/').reply(200, bitcoinSummary)
+}
 
 describe('integration:createTransaction', () => {
+  let mock = null
+
   beforeAll(async () => {
+    mock = new MockAdapter(axios)
+
     await connect()
+
+    await createAxiosMock(mock)
   })
 
   afterAll(async () => {
@@ -19,9 +43,8 @@ describe('integration:createTransaction', () => {
   it('should return 200 on Create Transaction', async () => {
     // arrange
     const transaction = {
-      value: 500,
-      amount: 0.25,
-      transactionAt: moment().subtract(1, 'days').toDate()
+      value: 20000,
+      transactionAt: moment('2021-10-15')
     }
     // act
     const response = await request(app).post('/transactions').send(transaction)
@@ -31,7 +54,8 @@ describe('integration:createTransaction', () => {
 
     expect(response.statusCode).toBe(200)
     expect(transactionCreated.value).toBe(transaction.value)
-    expect(transactionCreated.amount).toBe(transactionCreated.amount)
+    expect(transactionCreated.transactionAt).toBeDefined()
+    expect(transactionCreated.amount).toBeDefined()
   })
 
   it('should return 422 and INVALID_SCHEMA error using invalid input', async () => {
@@ -47,6 +71,6 @@ describe('integration:createTransaction', () => {
 
     expect(response.statusCode).toBe(422)
     expect(error.type).toBe(ErrorTypesEnum.INVALID_SCHEMA)
-    expect(error.message).toMatch('O campo quantidade é obrigatório')
+    expect(error.message).toMatch('O campo data da transação é obrigatório')
   })
 })

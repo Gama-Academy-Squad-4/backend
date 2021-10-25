@@ -1,6 +1,9 @@
 const { Transaction } = require('../models/transactionModel')
 const { connect } = require('../../lib/database')
 const { error } = require('../../lib/error')
+const { bitcoin } = require('../../lib/bitcoin')
+const moment = require('moment-timezone')
+moment.tz.setDefault('America/Sao_Paulo')
 
 const create = async (data) => {
   await connect()
@@ -13,17 +16,62 @@ const create = async (data) => {
     throw error.buildSchemaValidationError(schemaValidationError)
   }
 
+  const amount = await getAmountBitcoin(transaction)
+
+  transaction.amount = amount
+
   return transaction.save()
 }
 
+const getAmountBitcoin = async (transaction) => {
+  const { value, transactionAt } = transaction
+
+  const sameDay = moment().isSame(transactionAt, 'day')
+
+  if (sameDay) {
+    const { ticker } = await bitcoin.getRealTimeSummary()
+
+    const amount = (1 * value / ticker.last).toFixed(8)
+
+    return amount
+  }
+
+  const { closing: bitcoinCloseValue } = await bitcoin.getSummaryPerDay(transactionAt)
+
+  const amount = (1 * value / bitcoinCloseValue).toFixed(8)
+
+  return amount
+}
+
 const update = async ({ id, ...body }) => {
+  await connect()
+
   if (!id) {
     throw error.buildSchemaValidationError({
       message: 'O id da transação não foi informado'
     })
   }
 
-  const updatedTransaction = await Transaction.findByIdAndUpdate(id, body, { new: true })
+  if (!body.transactionAt) {
+    throw error.buildSchemaValidationError({
+      message: 'A data da transação não foi informado'
+    })
+  }
+
+  if (!body.value) {
+    throw error.buildSchemaValidationError({
+      message: 'A valor da transação não foi informado'
+    })
+  }
+
+  const amount = await getAmountBitcoin(body)
+
+  const transaction = {
+    ...body,
+    amount
+  }
+
+  const updatedTransaction = await Transaction.findByIdAndUpdate(id, transaction, { new: true })
 
   if (!updatedTransaction) {
     throw error.buildTransactionNotFoundError(id)
@@ -33,6 +81,8 @@ const update = async ({ id, ...body }) => {
 }
 
 const findById = async (transactionId) => {
+  await connect()
+
   const transaction = await Transaction.findById(transactionId)
 
   if (!transaction) {
@@ -43,6 +93,8 @@ const findById = async (transactionId) => {
 }
 
 const remove = async (transactionId) => {
+  await connect()
+
   const removedTransaction = await Transaction.findByIdAndRemove(transactionId)
 
   if (!removedTransaction) {
@@ -59,6 +111,8 @@ const list = async ({
   page = 1,
   perPage = 50
 }) => {
+  await connect()
+
   page = Number(page)
   perPage = Number(perPage)
 
@@ -79,8 +133,29 @@ const list = async ({
     .skip(skip)
     .limit(maxPages)
     .sort(sort)
+    .lean()
 
-  return { transactions, totalSize: transactionsCount }
+  const handleTransactions = await calculateBitcoinVariation(transactions)
+
+  return { transactions: handleTransactions, totalSize: transactionsCount }
+}
+
+const calculateBitcoinVariation = async (transactions) => {
+  const { ticker } = await bitcoin.getRealTimeSummary()
+
+  const handleTransactions = transactions.map(transaction => {
+    const average = ((ticker.last / transaction.value - 1) * 100).toFixed(5)
+
+    const variationValue = (transaction.value * average / 100).toFixed(5)
+
+    return {
+      ...transaction,
+      average,
+      variationValue
+    }
+  })
+
+  return handleTransactions
 }
 
 const transactionService = {

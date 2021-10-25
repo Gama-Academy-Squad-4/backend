@@ -1,15 +1,15 @@
-const { transactionService } = require('../../services/transactionService')
+const { dashboardService } = require('../../services/dashboardService')
 
 /**
 *  @openapi
-*   /transactions:
+*   /dashboards:
 *    get:
-*      summary: List transactions
+*      summary: Get statistics
 *      consumes:
 *      - application/json
 *      responses:
 *       200:
-*        description: 'Transaction list'
+*        description: 'Transaction statistics'
 *        schema:
 *          type: array
 *          items:
@@ -21,26 +21,18 @@ const { transactionService } = require('../../services/transactionService')
 *               type: number
 *             amount:
 *               type: number
-*             transactionAt:
-*               type: date
-*             average:
-*               type: number
-*             variationValue:
-*               type: number
 *             updatedAt:
 *               type: date
 *             createdAt:
 *               type: date
 */
 
-const listTransactions = async (req, res) => {
+const getStatistics = async (req, res) => {
   try {
-    const { value, amount, sort, page, perPage } = req.query
-
-    const transactions = await transactionService.list({ value, amount, sort, page, perPage })
+    const statistics = await dashboardService.getTransactionStatistics()
 
     return res.json({
-      transactions
+      statistics
     })
   } catch (error) {
     if (error) return res.status(error.statusCode).json(error)
@@ -48,5 +40,5 @@ const listTransactions = async (req, res) => {
 }
 
 module.exports = {
-  listTransactions
+  getStatistics
 }

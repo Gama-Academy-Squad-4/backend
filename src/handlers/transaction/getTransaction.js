@@ -1,5 +1,42 @@
 const { transactionService } = require('../../services/transactionService')
 
+/**
+*  @openapi
+*   /transactions/:transactionId:
+*    get:
+*      summary: Get transaction
+*      consumes:
+*      - application/json
+*      parameters:
+*      - in: path
+*        name: transactionId
+*        description: Transaction id
+*        required: true
+*        type: string
+*      responses:
+*       200:
+*        description: 'Return transaction'
+*        schema:
+*          type: object
+*          properties:
+*             _id:
+*               type: string
+*             value:
+*               type: number
+*             amount:
+*               type: number
+*             transactionAt:
+*               type: date
+*             updatedAt:
+*               type: date
+*             createdAt:
+*               type: date
+*       412:
+*        description: 'Transaction not found'
+*        schema:
+*          $ref: '#/definitions/TransactionNotFound'
+*/
+
 const getTransaction = async (req, res) => {
   try {
     const { transactionId } = req.params

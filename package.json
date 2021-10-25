@@ -1,27 +1,17 @@
 {
-	"name": "apigame",
+	"name": "apibitcoin",
 	"version": "1.0.0",
-	"description": "https://github.com/serverless/serverless",
-	"main": "handler.js",
 	"scripts": {
 		"start": "nodemon src/server.js",
 		"deploy": "serverless deploy",
 		"debug": "node --inspect ./node_modules/serverless/bin/serverless offline start",
-		"change_module_youtube": "node ./scripts/change_module_youtube.js",
 		"test": "cross-env NODE_ENV=test standard && jest --env=node --detectOpenHandles --runInBand --forceExit --verbose",
 		"my-test": "NODE_ENV=test standard && jest --env=node --detectOpenHandles --forceExit",
-		"win-my-test": "NODE_ENV=test standard && jest --env=node --detectOpenHandles --forceExit"
+		"win-my-test": "NODE_ENV=test standard && jest --env=node --detectOpenHandles --forceExit",
+		"docs": "npm run docs:open-api && npm run docs:html",
+		"docs:open-api": "swagger-jsdoc -o ./public/definition.json -d openApiDefs.js ./src/handlers/**/**.js ./lib/**/**.js",
+		"docs:html": "redoc-cli bundle ./public/definition.json -o ./public/index.html"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://gitlab.com/tindin/serverless.git"
-	},
-	"author": "",
-	"license": "ISC",
-	"bugs": {
-		"url": "https://gitlab.com/tindin/serverless/issues"
-	},
-	"homepage": "https://gitlab.com/tindin/serverless#README",
 	"standard": {
 		"globals": [
 			"describe",
@@ -40,7 +30,10 @@
 		"eslint": "^6.8.0",
 		"jest": "^27.0.4",
 		"mongodb-memory-server": "^6.9.6",
-		"standard": "^14.3.4"
+		"standard": "^14.3.4",
+		"swagger-jsdoc": "^6.1.0",
+		"redoc-cli": "^0.12.1",
+		"axios-mock-adapter": "^1.20.0"
 	},
 	"dependencies": {
 		"axios": "^0.21.4",
