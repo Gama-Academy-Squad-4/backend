@@ -8,9 +8,10 @@
 		"test": "cross-env NODE_ENV=test standard && jest --env=node --detectOpenHandles --runInBand --forceExit --verbose",
 		"my-test": "NODE_ENV=test standard && jest --env=node --detectOpenHandles --forceExit",
 		"win-my-test": "NODE_ENV=test standard && jest --env=node --detectOpenHandles --forceExit",
-		"docs": "npm run docs:open-api && npm run docs:html",
+		"docs": "npm run docs:mkdir && npm run docs:open-api && npm run docs:html",
 		"docs:open-api": "swagger-jsdoc -o ./public/definition.json -d openApiDefs.js ./src/handlers/**/**.js ./lib/**/**.js",
-		"docs:html": "redoc-cli bundle ./public/definition.json -o ./public/index.html"
+		"docs:html": "redoc-cli bundle ./public/definition.json -o ./public/index.html",
+        "docs:mkdir": "mkdirp public"
 	},
 	"standard": {
 		"globals": [
