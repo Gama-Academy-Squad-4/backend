@@ -36,11 +36,15 @@ const getTransactionsStatistics = async () => {
 }
 
 const getConsolidateWeek = async (transactions) => {
-  const week = transactions.filter(transaction => moment(transaction.transactionAt).isSame(new Date(), 'week'))
+  const startDate = moment().format('DD-MM-YYYY').subtract(7, 'd')
+
+  const lastSevenDays = await Transaction.find({
+    transactionAt: { $gt: startDate }
+  }).lean()
 
   const consolidadeTransactions = []
-  if (week && week.length) {
-    week.forEach(transactionWeek => {
+  if (lastSevenDays && lastSevenDays.length) {
+    lastSevenDays.forEach(transactionWeek => {
       const date = moment(transactionWeek.transactionAt, 'YYYY/MM/DD')
 
       const transactionWeekDay = date.format('D')
