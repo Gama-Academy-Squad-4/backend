@@ -5,7 +5,7 @@
 		"start": "nodemon src/server.js",
 		"deploy": "node src/server.js",
 		"debug": "node --inspect ./node_modules/serverless/bin/serverless offline start",
-		"test": "cross-env NODE_ENV=test standard && jest --env=node --detectOpenHandles --runInBand --forceExit --verbose",
+		"test": "cross-env NODE_ENV=test && jest --env=node --detectOpenHandles --runInBand --forceExit --verbose",
         "lint": "eslint .",
 		"my-test": "NODE_ENV=test standard && jest --env=node --detectOpenHandles --forceExit",
 		"win-my-test": "NODE_ENV=test standard && jest --env=node --detectOpenHandles --forceExit",
