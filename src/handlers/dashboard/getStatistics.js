@@ -65,7 +65,7 @@ const getStatistics = async (req, res) => {
       statistics
     })
   } catch (error) {
-    if (error) return res.status(error.statusCode).json(error)
+    if (error) return res.status(error.statusCode || error).json(error)
   }
 }
 

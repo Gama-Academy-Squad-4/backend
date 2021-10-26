@@ -36,41 +36,47 @@ const getTransactionsStatistics = async () => {
 }
 
 const getConsolidateWeek = async (transactions) => {
-  const startDate = moment().format('DD-MM-YYYY').subtract(7, 'd')
+  const startDate = moment().subtract(7, 'd')
 
   const lastSevenDays = await Transaction.find({
     transactionAt: { $gt: startDate }
   }).lean()
 
-  const consolidadeTransactions = []
+  console.log('lastSevenDays', lastSevenDays)
+
   if (lastSevenDays && lastSevenDays.length) {
-    lastSevenDays.forEach(transactionWeek => {
-      const date = moment(transactionWeek.transactionAt, 'YYYY/MM/DD')
+    const handleTransactions = await transactionService.calculateBitcoinVariation(lastSevenDays)
 
-      const transactionWeekDay = date.format('D')
+    const consolidadeTransactions = []
+    if (handleTransactions && handleTransactions.length) {
+      handleTransactions.forEach(transactionWeek => {
+        const date = moment(transactionWeek.transactionAt, 'YYYY/MM/DD')
 
-      const [transaction] = consolidadeTransactions.filter(transaction => {
-        const date = moment(transaction.transactionAt, 'YYYY/MM/DD')
+        const transactionWeekDay = date.format('D')
 
-        const transactionDay = date.format('D')
+        const [transaction] = consolidadeTransactions.filter(transaction => {
+          const date = moment(transaction.transactionAt, 'YYYY/MM/DD')
 
-        return transactionDay === transactionWeekDay
-      })
+          const transactionDay = date.format('D')
 
-      if (!transaction) {
-        consolidadeTransactions.push({
-          transactionAt: transactionWeek.transactionAt,
-          totalValue: transactionWeek.value + transactionWeek.variationValue
+          return transactionDay === transactionWeekDay
         })
-      } else {
-        const totalValue = transactionWeek.value + transactionWeek.variationValue
-        transaction.totalValue += totalValue
-      }
-    })
-  }
 
-  return {
-    consolidateWeek: consolidadeTransactions
+        if (!transaction) {
+          consolidadeTransactions.push({
+            transactionAt: transactionWeek.transactionAt,
+            totalValue: transactionWeek.value + transactionWeek.variationValue
+          })
+        } else {
+          const totalValue = transactionWeek.value + transactionWeek.variationValue
+          transaction.totalValue += totalValue
+        }
+      })
+    }
+
+    return {
+      consolidateWeek: consolidadeTransactions
+    }
   }
 }
 
