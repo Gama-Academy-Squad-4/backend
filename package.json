@@ -6,12 +6,13 @@
 		"deploy": "node src/server.js",
 		"debug": "node --inspect ./node_modules/serverless/bin/serverless offline start",
 		"test": "cross-env NODE_ENV=test standard && jest --env=node --detectOpenHandles --runInBand --forceExit --verbose",
+        "lint": "eslint .",
 		"my-test": "NODE_ENV=test standard && jest --env=node --detectOpenHandles --forceExit",
 		"win-my-test": "NODE_ENV=test standard && jest --env=node --detectOpenHandles --forceExit",
 		"docs": "npm run docs:mkdir && npm run docs:open-api && npm run docs:html",
 		"docs:open-api": "swagger-jsdoc -o ./public/definition.json -d openApiDefs.js ./src/handlers/**/**.js ./lib/**/**.js",
 		"docs:html": "redoc-cli bundle ./public/definition.json -o ./public/index.html",
-        "docs:mkdir": "mkdirp public"
+		"docs:mkdir": "mkdirp public"
 	},
 	"standard": {
 		"globals": [
@@ -27,14 +28,17 @@
 		]
 	},
 	"devDependencies": {
+		"axios-mock-adapter": "^1.20.0",
 		"cross-env": "^7.0.3",
-		"eslint": "^6.8.0",
+		"eslint": "^7.32.0",
+		"eslint-config-standard": "^16.0.3",
+		"eslint-plugin-import": "^2.25.2",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint-plugin-promise": "^5.1.1",
 		"jest": "^27.0.4",
 		"mongodb-memory-server": "^6.9.6",
-		"standard": "^14.3.4",
-		"swagger-jsdoc": "^6.1.0",
 		"redoc-cli": "^0.12.1",
-		"axios-mock-adapter": "^1.20.0"
+		"swagger-jsdoc": "^6.1.0"
 	},
 	"dependencies": {
 		"axios": "^0.21.4",
