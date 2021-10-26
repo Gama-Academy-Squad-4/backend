@@ -42,8 +42,6 @@ const getConsolidateWeek = async (transactions) => {
     transactionAt: { $gt: startDate }
   }).lean()
 
-  console.log('lastSevenDays', lastSevenDays)
-
   if (lastSevenDays && lastSevenDays.length) {
     const handleTransactions = await transactionService.calculateBitcoinVariation(lastSevenDays)
 
