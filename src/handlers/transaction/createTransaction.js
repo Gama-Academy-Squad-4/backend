@@ -4,7 +4,7 @@ const { transactionService } = require('../../services/transactionService')
 *  @openapi
 *   /transactions:
 *    post:
-*      summary: Create a new transaction
+*      summary: Create transaction
 *      consumes:
 *      - application/json
 *      parameters:
@@ -20,7 +20,8 @@ const { transactionService } = require('../../services/transactionService')
 *             value:
 *               type: number
 *             transactionAt:
-*               type: date
+*               type: string
+*               format: date-time
 *      responses:
 *       200:
 *        description: 'Transaction created'
@@ -34,11 +35,14 @@ const { transactionService } = require('../../services/transactionService')
 *             amount:
 *               type: number
 *             transactionAt:
-*               type: date
+*               type: string
+*               format: date-time
 *             updatedAt:
-*               type: date
+*               type: string
+*               format: date-time
 *             createdAt:
-*               type: date
+*               type: string
+*               format: date-time
 *       422:
 *        description: 'Invalid InvalidSchema'
 *        schema:

@@ -11,25 +11,55 @@ const { dashboardService } = require('../../services/dashboardService')
 *       200:
 *        description: 'Transaction statistics'
 *        schema:
-*          type: array
-*          items:
-*            type: object
-*            properties:
-*             _id:
-*               type: string
-*             value:
-*               type: number
-*             amount:
-*               type: number
-*             updatedAt:
-*               type: date
-*             createdAt:
-*               type: date
+*          type: object
+*          properties:
+*             btcNow:
+*               type: object
+*               properties:
+*                valueNow:
+*                  type: number
+*                hight:
+*                  type: number
+*                low:
+*                  type: number
+*             consolidate:
+*               type: object
+*               properties:
+*                totalInvested:
+*                  type: number
+*                totalBalance:
+*                  type: number
+*                totalProfit:
+*                  type: number
+*             totalWeek:
+*               type: object
+*               properties:
+*                totalBalance:
+*                  type: number
+*                totalAvarage:
+*                  type: number
+*             totalMounth:
+*               type: object
+*               properties:
+*                totalBalance:
+*                  type: number
+*                totalAvarage:
+*                  type: number
+*             consolidateWeek:
+*               type: array
+*               items:
+*                type: object
+*                properties:
+*                 transactionAt:
+*                   type: string
+*                   format: date-time
+*                 totalValue:
+*                   type: number
 */
 
 const getStatistics = async (req, res) => {
   try {
-    const statistics = await dashboardService.getTransactionStatistics()
+    const statistics = await dashboardService.getTransactionsStatistics()
 
     return res.json({
       statistics

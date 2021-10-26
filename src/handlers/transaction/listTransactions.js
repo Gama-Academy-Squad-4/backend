@@ -22,15 +22,18 @@ const { transactionService } = require('../../services/transactionService')
 *             amount:
 *               type: number
 *             transactionAt:
-*               type: date
+*               type: string
+*               format: date-time
 *             average:
 *               type: number
 *             variationValue:
 *               type: number
 *             updatedAt:
-*               type: date
+*               type: string
+*               format: date-time
 *             createdAt:
-*               type: date
+*               type: string
+*               format: date-time
 */
 
 const listTransactions = async (req, res) => {

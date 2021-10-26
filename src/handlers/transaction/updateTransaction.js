@@ -20,7 +20,8 @@ const { transactionService } = require('../../services/transactionService')
 *             value:
 *               type: number
 *             transactionAt:
-*               type: date
+*               type: string
+*               format: date-time
 *      responses:
 *       200:
 *        description: 'Transaction updated'
@@ -34,11 +35,14 @@ const { transactionService } = require('../../services/transactionService')
 *             amount:
 *               type: number
 *             transactionAt:
-*               type: date
+*               type: string
+*               format: date-time
 *             updatedAt:
-*               type: date
+*               type: string
+*               format: date-time
 *             createdAt:
-*               type: date
+*               type: string
+*               format: date-time
 *       412:
 *        description: 'Transaction not found'
 *        schema:

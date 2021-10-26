@@ -31,14 +31,14 @@ const getAmountBitcoin = async (transaction) => {
   if (sameDay) {
     const { ticker } = await bitcoin.getRealTimeSummary()
 
-    const amount = (1 * value / ticker.last).toFixed(8)
+    const amount = (1 * value / ticker.last).toFixed(5)
 
     return amount
   }
 
   const { closing: bitcoinCloseValue } = await bitcoin.getSummaryPerDay(transactionAt)
 
-  const amount = (1 * value / bitcoinCloseValue).toFixed(8)
+  const amount = (1 * value / bitcoinCloseValue).toFixed(5)
 
   return amount
 }
@@ -144,9 +144,9 @@ const calculateBitcoinVariation = async (transactions) => {
   const { ticker } = await bitcoin.getRealTimeSummary()
 
   const handleTransactions = transactions.map(transaction => {
-    const average = ((ticker.last / transaction.value - 1) * 100).toFixed(5)
+    const average = parseFloat((ticker.last / transaction.value - 1) * 100)
 
-    const variationValue = (transaction.value * average / 100).toFixed(5)
+    const variationValue = parseFloat(transaction.value * average / 100)
 
     return {
       ...transaction,
@@ -163,7 +163,8 @@ const transactionService = {
   update,
   findById,
   remove,
-  list
+  list,
+  calculateBitcoinVariation
 }
 
 module.exports = {
