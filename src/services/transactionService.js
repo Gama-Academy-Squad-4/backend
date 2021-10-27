@@ -31,14 +31,14 @@ const getAmountBitcoin = async (transaction) => {
   if (sameDay) {
     const { ticker } = await bitcoin.getRealTimeSummary()
 
-    const amount = (1 * value / ticker.last).toFixed(5)
+    const amount = (1 * value / ticker.last).toFixed(8)
 
     return amount
   }
 
   const { closing: bitcoinCloseValue } = await bitcoin.getSummaryPerDay(transactionAt)
 
-  const amount = (1 * value / bitcoinCloseValue).toFixed(5)
+  const amount = (1 * value / bitcoinCloseValue).toFixed(8)
 
   return amount
 }

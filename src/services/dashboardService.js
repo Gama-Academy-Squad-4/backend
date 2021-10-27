@@ -63,11 +63,10 @@ const getConsolidateWeek = async (transactions) => {
         if (!transaction) {
           consolidadeTransactions.push({
             transactionAt: transactionWeek.transactionAt,
-            totalValue: transactionWeek.value + transactionWeek.variationValue
+            totalValue: transactionWeek.variationValue
           })
         } else {
-          const totalValue = transactionWeek.value + transactionWeek.variationValue
-          transaction.totalValue += totalValue
+          transaction.totalValue += transactionWeek.variationValue
         }
       })
     }
